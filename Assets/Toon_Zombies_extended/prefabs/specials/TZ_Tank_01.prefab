@@ -500,6 +500,8 @@ GameObject:
   m_Component:
   - component: {fileID: 489202}
   - component: {fileID: 13797906}
+  - component: {fileID: 7712374339000046916}
+  - component: {fileID: 4161868352449555493}
   m_Layer: 0
   m_Name: TZ_Tank_Head_01
   m_TagString: Untagged
@@ -589,6 +591,47 @@ SkinnedMeshRenderer:
     m_Center: {x: -0.6213374, y: 0.05618046, z: 0.00000067800283}
     m_Extent: {x: 0.14825772, y: 0.13550986, z: 0.10043242}
   m_DirtyAABB: 0
+--- !u!143 &7712374339000046916
+CharacterController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 116250}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Height: 0.22893512
+  m_Radius: 1.5219012
+  m_SlopeLimit: 45
+  m_StepOffset: 0.3
+  m_SkinWidth: 0.08
+  m_MinMoveDistance: 0.001
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &4161868352449555493
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 116250}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 139c646d7e9224965b1c3505fe3bec08, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Head
+  moveSpeed: 5
+  jumpForce: 6
+  gravity: -14
+  throwDrag: 4
 --- !u!1 &119314
 GameObject:
   m_ObjectHideFlags: 0
