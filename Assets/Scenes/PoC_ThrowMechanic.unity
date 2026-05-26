@@ -180,7 +180,7 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
-  field of view: 60.000004
+  field of view: 60
   orthographic: 0
   orthographic size: 5
   m_Depth: -1
@@ -206,8 +206,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 330585543}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.28946453, y: -0.0022601848, z: 0.00068350707, w: 0.95718586}
-  m_LocalPosition: {x: -0.022, y: 2.5989926, z: -11.65561}
+  m_LocalRotation: {x: 0.25442782, y: -0.0022835683, z: 0.00060077535, w: 0.96708894}
+  m_LocalPosition: {x: -0.022, y: 2.532992, z: -10.786769}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -434,6 +434,7 @@ GameObject:
   - component: {fileID: 736140993}
   - component: {fileID: 736140992}
   - component: {fileID: 736140991}
+  - component: {fileID: 736140994}
   - component: {fileID: 736140990}
   m_Layer: 0
   m_Name: PlayerCamera
@@ -466,7 +467,7 @@ MonoBehaviour:
     LookAtTarget: {fileID: 0}
     CustomLookAtTarget: 0
   Lens:
-    FieldOfView: 60.000004
+    FieldOfView: 60
     OrthographicSize: 5
     NearClipPlane: 0.3
     FarClipPlane: 1000
@@ -493,13 +494,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 736140987}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.28946447, y: -0.0022601841, z: 0.0006835068, w: 0.9571859}
-  m_LocalPosition: {x: -0.022, y: 2.5989926, z: -11.65561}
+  m_LocalRotation: {x: 0.25442776, y: -0.002283568, z: 0.0006007753, w: 0.96708894}
+  m_LocalPosition: {x: -0.022, y: 2.532992, z: -10.786769}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 26.26, y: -0.271, z: -0.03}
 --- !u!114 &736140990
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -604,7 +605,7 @@ MonoBehaviour:
       Size: {x: 0.8, y: 0.8}
       Offset: {x: 0, y: 0}
   CenterOnActivate: 1
-  TargetOffset: {x: 0, y: 0, z: 0}
+  TargetOffset: {x: 0, y: 1.15, z: 0}
   Damping: {x: 0.5, y: 0.5}
   Lookahead:
     Enabled: 0
@@ -623,7 +624,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b5d7c088409d9a40b7b09aa707777f8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Cinemachine::Unity.Cinemachine.CinemachineOrbitalFollow
-  TargetOffset: {x: 0, y: 0.57, z: -0.79}
+  TargetOffset: {x: 0, y: 0, z: -0.5}
   TrackerSettings:
     BindingMode: 4
     PositionDamping: {x: 1, y: 1, z: 1}
@@ -655,7 +656,7 @@ MonoBehaviour:
       Time: 2
     Restrictions: 0
   VerticalAxis:
-    Value: 32.1
+    Value: 43
     Center: 17.5
     Range: {x: -10, y: 45}
     Wrap: 0
@@ -674,6 +675,21 @@ MonoBehaviour:
       Wait: 1
       Time: 2
     Restrictions: 0
+--- !u!114 &736140994
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 736140987}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 28fb95d2b77ad496f90e1d244ade3738, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CameraZoom
+  zoomSpeed: 0.05
+  minDistance: 2
+  maxDistance: 20
 --- !u!1 &831658069 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 178846, guid: 11d95eec203bbdb459772eeaaa4199f3, type: 3}
@@ -903,7 +919,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 462320, guid: 11d95eec203bbdb459772eeaaa4199f3, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.628
+      value: -0.877
       objectReference: {fileID: 0}
     - target: {fileID: 462320, guid: 11d95eec203bbdb459772eeaaa4199f3, type: 3}
       propertyPath: m_LocalPosition.z
@@ -937,6 +953,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 9566968, guid: 11d95eec203bbdb459772eeaaa4199f3, type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: d51244e8911d64859b3abd7324a5abd5, type: 2}
     m_RemovedComponents:
     - {fileID: 4161868352449555493, guid: 11d95eec203bbdb459772eeaaa4199f3, type: 3}
     m_RemovedGameObjects: []
@@ -980,9 +1000,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: '::'
   moveSpeed: 5
   jumpForce: 6
-  gravity: -14
-  throwDrag: 4
-  headRadius: 0.3
+  groundCheckDistance: 0.4
 --- !u!143 &1269259039
 CharacterController:
   m_ObjectHideFlags: 0

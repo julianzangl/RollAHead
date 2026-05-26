@@ -58,8 +58,8 @@ public class Head : MonoBehaviour
 
         if (recallAction.WasPressedThisFrame())
         {
-            headThrow.ReturnHead();
-            Destroy(gameObject);
+            isActive = false;          // stop input immediately
+            headThrow.ReturnHead();    // HeadThrow drives fly-back and destroys us
             return;
         }
 

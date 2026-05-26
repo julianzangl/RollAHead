@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 34491110496052464}
   - component: {fileID: 1055234797440266226}
   - component: {fileID: -6780415593749478016}
-  - component: {fileID: 2791582389994862531}
   - component: {fileID: -4885437578067271092}
   m_Layer: 0
   m_Name: ThowableHead
@@ -71,34 +70,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: '::'
   moveSpeed: 5
   jumpForce: 6
-  gravity: -14
-  throwDrag: 4
-  headRadius: 0.001
---- !u!143 &2791582389994862531
-CharacterController:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 611148671911825002}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Height: 0.3
-  m_Radius: 0.11
-  m_SlopeLimit: 45
-  m_StepOffset: 0.3
-  m_SkinWidth: 0.08
-  m_MinMoveDistance: 0.001
-  m_Center: {x: 0, y: -0.03, z: 1.35}
+  groundCheckDistance: 0.4
 --- !u!54 &-4885437578067271092
 Rigidbody:
   m_ObjectHideFlags: 0
