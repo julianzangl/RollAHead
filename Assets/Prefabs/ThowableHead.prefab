@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 1055234797440266226}
   - component: {fileID: -6780415593749478016}
   - component: {fileID: 2791582389994862531}
+  - component: {fileID: -4885437578067271092}
   m_Layer: 0
   m_Name: ThowableHead
   m_TagString: Untagged
@@ -72,6 +73,7 @@ MonoBehaviour:
   jumpForce: 6
   gravity: -14
   throwDrag: 4
+  headRadius: 0.001
 --- !u!143 &2791582389994862531
 CharacterController:
   m_ObjectHideFlags: 0
@@ -97,6 +99,33 @@ CharacterController:
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: -0.03, z: 1.35}
+--- !u!54 &-4885437578067271092
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 611148671911825002}
+  serializedVersion: 5
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &2652583649917482731
 GameObject:
   m_ObjectHideFlags: 0
