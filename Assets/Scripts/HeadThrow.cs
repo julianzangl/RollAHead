@@ -74,16 +74,20 @@ public class HeadThrow : MonoBehaviour
         camTarget.transform.position = spawnedHead.transform.position + Vector3.up * 1.5f;
 
         Head headScript = spawnedHead.GetComponent<Head>();
-        if (headScript == null)
+        RobotHead robotHeadScript = spawnedHead.GetComponent<RobotHead>();
+        if (headScript == null && robotHeadScript == null)
         {
-            Debug.LogError("[HeadThrow] throwableHead prefab is missing the Head script! Add Head.cs to the prefab.");
+            Debug.LogError("[HeadThrow] throwableHead prefab is missing the Head script! Add Head.cs or Robouthead.cs to the prefab.");
             currentHead.SetActive(true);
             isHeadThrown = false;
             Destroy(spawnedHead);
             Destroy(camTarget);
             return;
         }
-        headScript.Initialize(throwDirection, throwForce, this);
+        if (robotHeadScript != null)
+            robotHeadScript.Initialize(throwDirection, throwForce, this);
+        else
+            headScript.Initialize(throwDirection, throwForce, this);
 
         camera.Follow = camTarget.transform;
         camera.LookAt = camTarget.transform;
