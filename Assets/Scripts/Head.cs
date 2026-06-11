@@ -81,5 +81,18 @@ public class Head : MonoBehaviour
         Vector3 horizontal = moveDir * moveSpeed;
         rb.linearVelocity = new Vector3(horizontal.x, rb.linearVelocity.y, horizontal.z);
     }
+
+    void OnCollisionStay(Collision collision)
+    {
+        if (!isActive) return;
+
+        if (!collision.collider.TryGetComponent(out PushableBlock pushableBlock)) return;
+
+        Vector3 pushDirection = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
+        if (pushDirection.sqrMagnitude < 0.01f)
+            pushDirection = collision.transform.position - transform.position;
+
+        pushableBlock.Push(pushDirection);
+    }
 }
 

@@ -22,8 +22,10 @@ public class HeadThrow : MonoBehaviour
     private CinemachineOrbitalFollow orbitalFollow;
     private GameObject spawnedHead;
     private GameObject camTarget;
+    private bool robotHeadUnlocked;
 
     private Animator animator;
+    private static readonly Color RobotHeadColor = new Color(0.72f, 0.76f, 0.78f, 1f);
 
     void Start()
     {
@@ -67,17 +69,19 @@ public class HeadThrow : MonoBehaviour
         Vector3 throwDirection = camera.transform.forward;
 
         spawnedHead = Instantiate(throwableHead, headSocket.position, headSocket.rotation);
+        RobotHead upgradedRobotHead = robotHeadUnlocked ? ApplyRobotHeadUpgrade(spawnedHead) : null;
+
         currentHead.SetActive(false);
 
         // Camera target is NOT parented to head — manually tracked in Update() to avoid rotation
         camTarget = new GameObject("_HeadCamTarget");
         camTarget.transform.position = spawnedHead.transform.position + Vector3.up * 1.5f;
 
-        Head headScript = spawnedHead.GetComponent<Head>();
-        RobotHead robotHeadScript = spawnedHead.GetComponent<RobotHead>();
+        Head headScript = robotHeadUnlocked ? null : spawnedHead.GetComponent<Head>();
+        RobotHead robotHeadScript = upgradedRobotHead != null ? upgradedRobotHead : spawnedHead.GetComponent<RobotHead>();
         if (headScript == null && robotHeadScript == null)
         {
-            Debug.LogError("[HeadThrow] throwableHead prefab is missing the Head script! Add Head.cs or Robouthead.cs to the prefab.");
+            Debug.LogError("[HeadThrow] throwableHead prefab is missing the Head script! Add Head.cs or RobotHead.cs to the prefab.");
             currentHead.SetActive(true);
             isHeadThrown = false;
             Destroy(spawnedHead);
@@ -97,6 +101,50 @@ public class HeadThrow : MonoBehaviour
             orbitalFollow.TargetOffset = new Vector3(0f, -2.5f, 0f); // Adjust the radius as needed
         if (characterBody != null)
             characterBody.enabled = false;
+    }
+
+    public void EnableRobotHead()
+    {
+        robotHeadUnlocked = true;
+        ApplySilverColor(currentHead);
+
+        if (spawnedHead != null)
+        {
+            RobotHead robotHead = ApplyRobotHeadUpgrade(spawnedHead);
+            robotHead.Initialize(Vector3.zero, 0f, this);
+        }
+    }
+
+    private RobotHead ApplyRobotHeadUpgrade(GameObject headObject)
+    {
+        Head normalHead = headObject.GetComponent<Head>();
+        if (normalHead != null)
+        {
+            normalHead.enabled = false;
+            Destroy(normalHead);
+        }
+
+        RobotHead robotHead = headObject.GetComponent<RobotHead>();
+        if (robotHead == null)
+            robotHead = headObject.AddComponent<RobotHead>();
+
+        ApplySilverColor(headObject);
+        return robotHead;
+    }
+
+    private void ApplySilverColor(GameObject target)
+    {
+        if (target == null) return;
+
+        Renderer[] renderers = target.GetComponentsInChildren<Renderer>(true);
+        foreach (Renderer headRenderer in renderers)
+        {
+            Material material = headRenderer.material;
+            if (material.HasProperty("_BaseColor"))
+                material.SetColor("_BaseColor", RobotHeadColor);
+            if (material.HasProperty("_Color"))
+                material.SetColor("_Color", RobotHeadColor);
+        }
     }
 
     public void ReturnHead()

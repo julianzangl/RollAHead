@@ -57,5 +57,13 @@ public class Character : MonoBehaviour
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 10f * Time.deltaTime);
         }
     }
+
+    void OnControllerColliderHit(ControllerColliderHit hit)
+    {
+        if (hit.moveDirection.y < -0.3f) return;
+
+        if (hit.collider.TryGetComponent(out PushableBlock pushableBlock))
+            pushableBlock.Push(hit.moveDirection);
+    }
 }
 
