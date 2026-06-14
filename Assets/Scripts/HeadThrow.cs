@@ -10,8 +10,19 @@ public class HeadThrow : MonoBehaviour
     [SerializeField] private GameObject currentHead;
     [SerializeField] private Transform headSocket;
     [SerializeField] private new CinemachineCamera camera;
-    [SerializeField] private float throwForce = 10f;
     [SerializeField] private Character characterBody; // assign in Inspector, or auto-found
+
+    [Header("Throw Power ")]
+    [SerializeField] private float minThrowForce = 3f;        // power at the low end of the swing
+    [SerializeField] private float maxThrowForce = 10f;       // power at the top of the swing
+    [SerializeField] private float chargeSpeed = 0.8f;        // how fast the power pendulums low<->high while holding
+
+    // Read by the HUD: live aim state and the current charge (0 = min power, 1 = max power).
+    public bool IsAiming { get; private set; }
+    public float ChargeNormalized { get; private set; }
+    public bool IsHeadThrown => isHeadThrown;
+    public bool RobotHeadUnlocked => robotHeadUnlocked;
+    public static event System.Action OnRobotHeadUnlocked;
 
     [Header("Throw Aiming")]
     [SerializeField] private float throwTorque = 8f;          // spin so the head tumbles instead of flying lifeless
@@ -33,6 +44,8 @@ public class HeadThrow : MonoBehaviour
     private readonly List<Transform> aimDots = new List<Transform>();
     private Material dotMaterial;
     private float throwableMass = 1f;
+    private float chargeTime;
+    private float currentThrowForce;
     private Collider[] ownColliders;
     private Transform originalFollow;
     private Transform originalLookAt;
@@ -80,6 +93,7 @@ public class HeadThrow : MonoBehaviour
                 throwableMass = prefabRb.mass;
         }
 
+        currentThrowForce = minThrowForce;
         SetupDotMaterial();
     }
 
@@ -125,17 +139,28 @@ public class HeadThrow : MonoBehaviour
 
     void Update()
     {
+        // Restart the power swing each time the throw is freshly pressed.
+        if (throwAction.WasPressedThisFrame() && !isHeadThrown)
+            chargeTime = 0f;
+
         // Hold to aim (live trajectory preview), release to throw.
         bool aiming = !isHeadThrown && throwAction.IsPressed();
         if (aiming)
         {
+            // Wii-golf style: power pendulums between min and max while holding.
+            chargeTime += Time.deltaTime;
+            ChargeNormalized = Mathf.PingPong(chargeTime * chargeSpeed, 1f);
+            currentThrowForce = Mathf.Lerp(minThrowForce, maxThrowForce, ChargeNormalized);
+
             FaceAimDirection();
             UpdateAimPreview();
         }
         else
         {
             HideAimDots();
+            ChargeNormalized = 0f;
         }
+        IsAiming = aiming;
 
         // While aiming, HeadThrow owns the facing — stop Character from fighting it.
         if (characterBody != null)
@@ -195,7 +220,7 @@ public class HeadThrow : MonoBehaviour
     private void UpdateAimPreview()
     {
         Vector3 origin = GetThrowOrigin();
-        Vector3 velocity = GetThrowDirection() * (throwForce / throwableMass);
+        Vector3 velocity = GetThrowDirection() * (currentThrowForce / throwableMass);
         Vector3 gravity = Physics.gravity;
 
         Vector3 previous = origin;
@@ -326,9 +351,9 @@ public class HeadThrow : MonoBehaviour
             return;
         }
         if (robotHeadScript != null)
-            robotHeadScript.Initialize(throwDirection, throwForce, this);
+            robotHeadScript.Initialize(throwDirection, currentThrowForce, this);
         else
-            headScript.Initialize(throwDirection, throwForce, this);
+            headScript.Initialize(throwDirection, currentThrowForce, this);
 
         // Add a tumble so the head feels alive in flight instead of sliding stiffly.
         Rigidbody spawnedRb = spawnedHead.GetComponent<Rigidbody>();
@@ -363,6 +388,7 @@ public class HeadThrow : MonoBehaviour
     public void EnableRobotHead()
     {
         robotHeadUnlocked = true;
+        OnRobotHeadUnlocked?.Invoke();
         ApplySilverColor(currentHead);
 
         if (spawnedHead != null)
