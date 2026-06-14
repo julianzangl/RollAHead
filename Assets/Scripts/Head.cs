@@ -6,6 +6,8 @@ public class Head : MonoBehaviour
     [SerializeField] private float moveSpeed = 5f;
     [SerializeField] private float jumpForce = 6f;
     [SerializeField] private float groundCheckDistance = 0.4f;
+    [SerializeField] private float groundSpinDamping = 30f;   // how fast the head stops spinning when grounded
+    [SerializeField] private float airControl = 6f;           // gentle steering while airborne (does NOT cancel momentum)
 
     private Rigidbody rb;
     private InputAction moveAction;
@@ -77,9 +79,20 @@ public class Head : MonoBehaviour
         Vector3 camRight   = Vector3.ProjectOnPlane(cam.right,   Vector3.up).normalized;
         Vector3 moveDir    = (camForward * input.y + camRight * input.x).normalized;
 
-        // Set horizontal velocity, preserve vertical (gravity handled by Rigidbody)
-        Vector3 horizontal = moveDir * moveSpeed;
-        rb.linearVelocity = new Vector3(horizontal.x, rb.linearVelocity.y, horizontal.z);
+        if (IsGrounded())
+        {
+            // On the ground: direct velocity control for precise puzzle movement.
+            Vector3 horizontal = moveDir * moveSpeed;
+            rb.linearVelocity = new Vector3(horizontal.x, rb.linearVelocity.y, horizontal.z);
+
+            // Kill the thrown tumble once grounded so the head settles instead of spinning forever.
+            rb.angularVelocity = Vector3.MoveTowards(rb.angularVelocity, Vector3.zero, groundSpinDamping * Time.fixedDeltaTime);
+        }
+        else if (moveDir.sqrMagnitude > 0.01f)
+        {
+            // Airborne: keep the throw/jump momentum, only allow gentle steering. Never zero it out.
+            rb.AddForce(moveDir * airControl, ForceMode.Acceleration);
+        }
     }
 
     void OnCollisionStay(Collision collision)

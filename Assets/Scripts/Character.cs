@@ -14,6 +14,10 @@ public class Character : MonoBehaviour
 
     private bool isWalking;
 
+    // When aiming a throw, HeadThrow owns the character's facing, so we skip self-rotation
+    // to avoid the two fighting over transform.rotation in the same frame.
+    public bool SuppressRotation { get; set; }
+
     void Start()
     {
         controller = GetComponent<CharacterController>();
@@ -50,8 +54,8 @@ public class Character : MonoBehaviour
         Vector3 velocity = moveDir * moveSpeed + Vector3.up * verticalVelocity;
         controller.Move(velocity * Time.deltaTime);
 
-        // Rotate character towards movement direction
-        if (moveDir.sqrMagnitude > 0.01f)
+        // Rotate character towards movement direction (unless an aim is driving the facing)
+        if (!SuppressRotation && moveDir.sqrMagnitude > 0.01f)
         {
             Quaternion targetRotation = Quaternion.LookRotation(moveDir);
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 10f * Time.deltaTime);

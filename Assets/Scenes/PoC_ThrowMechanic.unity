@@ -718,6 +718,19 @@ MonoBehaviour:
   camera: {fileID: 736140988}
   throwForce: 5
   characterBody: {fileID: 831658075}
+  throwTorque: 8
+  launchAngle: 40
+  aimTurnSpeed: 12
+  spawnForwardOffset: 0.6
+  aimCollisionLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  maxDots: 25
+  dotSpacing: 0.55
+  dotSize: 0.08
+  dotEndScale: 0.2
+  dotColor: {r: 0.9811321, g: 0.9811321, b: 0.9811321, a: 1}
+  aimSimStep: 0.045
 --- !u!143 &831658073
 CharacterController:
   m_ObjectHideFlags: 0
@@ -1001,6 +1014,8 @@ MonoBehaviour:
   moveSpeed: 5
   jumpForce: 6
   groundCheckDistance: 0.4
+  groundSpinDamping: 30
+  airControl: 6
 --- !u!143 &1269259039
 CharacterController:
   m_ObjectHideFlags: 0
