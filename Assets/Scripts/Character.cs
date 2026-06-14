@@ -5,11 +5,13 @@ public class Character : MonoBehaviour
 {
     [SerializeField] private float moveSpeed = 2f;
     [SerializeField] private float gravity = -9.81f;
+    [SerializeField] private float jumpForce = 5f;
 
 
     private Animator animator;
     private CharacterController controller;
     private InputAction moveAction;
+    private InputAction jumpAction;
     private float verticalVelocity;
 
     private bool isWalking;
@@ -22,6 +24,7 @@ public class Character : MonoBehaviour
     {
         controller = GetComponent<CharacterController>();
         moveAction = InputSystem.actions.FindAction("Move");
+        jumpAction = InputSystem.actions.FindAction("Jump");
         animator = GetComponent<Animator>();
 
         // Rigidbody + CharacterController on the same object fight each other.
@@ -45,9 +48,13 @@ public class Character : MonoBehaviour
         Vector3 moveDir = (camForward * input.y + camRight * input.x).normalized;
         isWalking = moveDir.sqrMagnitude > 0.01f;
         animator.SetBool("isWalking", isWalking);
-        // Gravity
+        // Gravity + jump
         if (controller.isGrounded)
+        {
             verticalVelocity = -1f;
+            if (jumpAction != null && jumpAction.WasPressedThisFrame())
+                verticalVelocity = jumpForce;
+        }
         else
             verticalVelocity += gravity * Time.deltaTime;
 
