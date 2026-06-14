@@ -7,11 +7,15 @@ public class SimpleMovingPlatform : MonoBehaviour
     [SerializeField] private float speed = 2f;
     [SerializeField] private bool loop = true;
     [SerializeField] private float riderCheckHeight = 1.5f;
+    [SerializeField] private float startDelay = 1.5f;
 
     private Vector3 startPosition;
     private Vector3 endPosition;
     private Vector3 lastPosition;
     private bool movingForward = true;
+    private bool moving;
+    private bool startDelayRunning;
+    private float startTimer;
 
     void Awake()
     {
@@ -22,6 +26,12 @@ public class SimpleMovingPlatform : MonoBehaviour
 
     void FixedUpdate()
     {
+        if (!moving)
+        {
+            UpdateDelayedStart();
+            return;
+        }
+
         Vector3 targetPosition = movingForward ? endPosition : startPosition;
         Vector3 nextPosition = Vector3.MoveTowards(
             transform.position,
@@ -39,15 +49,52 @@ public class SimpleMovingPlatform : MonoBehaviour
             movingForward = !movingForward;
     }
 
+    public void ResetPlatform()
+    {
+        moving = false;
+        startDelayRunning = false;
+        startTimer = 0f;
+        movingForward = true;
+        transform.position = startPosition;
+        lastPosition = startPosition;
+    }
+
+    private void UpdateDelayedStart()
+    {
+        if (!startDelayRunning)
+        {
+            if (!HasZombieRider()) return;
+
+            startDelayRunning = true;
+            startTimer = 0f;
+        }
+
+        startTimer += Time.fixedDeltaTime;
+        if (startTimer >= startDelay)
+            moving = true;
+    }
+
+    private bool HasZombieRider()
+    {
+        Vector3 halfExtents = GetRiderCheckHalfExtents();
+        Vector3 center = GetRiderCheckCenter();
+
+        Collider[] hits = Physics.OverlapBox(center, halfExtents, transform.rotation);
+        foreach (Collider hit in hits)
+        {
+            if (hit.GetComponentInParent<Character>() != null)
+                return true;
+        }
+
+        return false;
+    }
+
     private void MoveRiders(Vector3 delta)
     {
         if (delta.sqrMagnitude <= 0f) return;
 
-        Vector3 halfExtents = new Vector3(
-            transform.localScale.x * 0.5f,
-            riderCheckHeight * 0.5f,
-            transform.localScale.z * 0.5f);
-        Vector3 center = transform.position + Vector3.up * ((transform.localScale.y * 0.5f) + (riderCheckHeight * 0.5f));
+        Vector3 halfExtents = GetRiderCheckHalfExtents();
+        Vector3 center = GetRiderCheckCenter();
 
         Collider[] hits = Physics.OverlapBox(center, halfExtents, transform.rotation);
         HashSet<CharacterController> movedControllers = new HashSet<CharacterController>();
@@ -60,5 +107,18 @@ public class SimpleMovingPlatform : MonoBehaviour
             controller.Move(delta);
             movedControllers.Add(controller);
         }
+    }
+
+    private Vector3 GetRiderCheckHalfExtents()
+    {
+        return new Vector3(
+            transform.localScale.x * 0.5f,
+            riderCheckHeight * 0.5f,
+            transform.localScale.z * 0.5f);
+    }
+
+    private Vector3 GetRiderCheckCenter()
+    {
+        return transform.position + Vector3.up * ((transform.localScale.y * 0.5f) + (riderCheckHeight * 0.5f));
     }
 }

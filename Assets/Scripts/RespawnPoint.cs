@@ -2,12 +2,19 @@ using UnityEngine;
 
 public class RespawnPoint : MonoBehaviour
 {
-    private static RespawnPoint current;
+    private static Vector3 currentPosition;
+    private static bool hasCurrentPosition;
 
-    public static Vector3 CurrentPosition => current != null ? current.transform.position : Vector3.zero;
+    public static Vector3 CurrentPosition => hasCurrentPosition ? currentPosition : Vector3.zero;
 
     void Awake()
     {
-        current = this;
+        SetCurrentPosition(transform.position);
+    }
+
+    public static void SetCurrentPosition(Vector3 position)
+    {
+        currentPosition = position;
+        hasCurrentPosition = true;
     }
 }

@@ -6,6 +6,7 @@ public class Character : MonoBehaviour
     [SerializeField] private float moveSpeed = 2f;
     [SerializeField] private float gravity = -9.81f;
     [SerializeField] private float jumpForce = 5f;
+    [SerializeField] private float terminalVelocity = -25f;
 
 
     private Animator animator;
@@ -56,7 +57,7 @@ public class Character : MonoBehaviour
                 verticalVelocity = jumpForce;
         }
         else
-            verticalVelocity += gravity * Time.deltaTime;
+            verticalVelocity = Mathf.Max(verticalVelocity + gravity * Time.deltaTime, terminalVelocity);
 
         Vector3 velocity = moveDir * moveSpeed + Vector3.up * verticalVelocity;
         controller.Move(velocity * Time.deltaTime);
@@ -75,6 +76,11 @@ public class Character : MonoBehaviour
 
         if (hit.collider.TryGetComponent(out PushableBlock pushableBlock))
             pushableBlock.Push(hit.moveDirection);
+    }
+
+    public void ResetVerticalVelocity()
+    {
+        verticalVelocity = 0f;
     }
 }
 
