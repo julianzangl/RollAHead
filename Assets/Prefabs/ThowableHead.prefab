@@ -72,7 +72,7 @@ MonoBehaviour:
   jumpForce: 6
   groundCheckDistance: 0.4
   groundSpinDamping: 30
-  airControl: 6
+  airControl: 12
 --- !u!54 &-4885437578067271092
 Rigidbody:
   m_ObjectHideFlags: 0

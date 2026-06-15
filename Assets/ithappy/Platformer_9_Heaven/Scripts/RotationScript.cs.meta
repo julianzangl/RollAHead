@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: cca0456043e9b3e479127134f64a6c99
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 292064
+  packageName: Platformer 9 Heaven - Low Poly 3D Models Pack
+  packageVersion: 2.1
+  assetPath: Assets/ithappy/Platformer_9_Heaven/Scripts/RotationScript.cs
+  uploadId: 782601

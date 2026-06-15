@@ -7,7 +7,7 @@ public class Head : MonoBehaviour
     [SerializeField] private float jumpForce = 6f;
     [SerializeField] private float groundCheckDistance = 0.4f;
     [SerializeField] private float groundSpinDamping = 30f;   // how fast the head stops spinning when grounded
-    [SerializeField] private float airControl = 10f;           // gentle steering while airborne (does NOT cancel momentum)
+    [SerializeField] private float airControl = 10f; // gentle steering while airborne (does NOT cancel momentum)
 
     private Rigidbody rb;
     private InputAction moveAction;

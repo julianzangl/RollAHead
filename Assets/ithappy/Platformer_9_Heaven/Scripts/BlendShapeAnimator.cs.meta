@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 65263cf8f45a8554fbcf935807507650
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 292064
+  packageName: Platformer 9 Heaven - Low Poly 3D Models Pack
+  packageVersion: 2.1
+  assetPath: Assets/ithappy/Platformer_9_Heaven/Scripts/BlendShapeAnimator.cs
+  uploadId: 782601
