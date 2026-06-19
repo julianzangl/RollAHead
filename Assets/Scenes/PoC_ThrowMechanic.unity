@@ -26,7 +26,7 @@ RenderSettings:
   m_AmbientIntensity: 1
   m_AmbientMode: 0
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
-  m_SkyboxMaterial: {fileID: 10304, guid: 0000000000000000f000000000000000, type: 0}
+  m_SkyboxMaterial: {fileID: 2100000, guid: ac839f8a315b9564cb39fec1efba8cbe, type: 2}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
@@ -718,6 +718,19 @@ MonoBehaviour:
   camera: {fileID: 736140988}
   throwForce: 5
   characterBody: {fileID: 831658075}
+  throwTorque: 8
+  launchAngle: 40
+  aimTurnSpeed: 12
+  spawnForwardOffset: 0.6
+  aimCollisionLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  maxDots: 25
+  dotSpacing: 0.55
+  dotSize: 0.08
+  dotEndScale: 0.2
+  dotColor: {r: 0.9811321, g: 0.9811321, b: 0.9811321, a: 1}
+  aimSimStep: 0.045
 --- !u!143 &831658073
 CharacterController:
   m_ObjectHideFlags: 0
@@ -1001,6 +1014,8 @@ MonoBehaviour:
   moveSpeed: 5
   jumpForce: 6
   groundCheckDistance: 0.4
+  groundSpinDamping: 30
+  airControl: 6
 --- !u!143 &1269259039
 CharacterController:
   m_ObjectHideFlags: 0
