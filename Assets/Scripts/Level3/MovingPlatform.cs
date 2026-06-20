@@ -1,45 +1,153 @@
+using System.Collections.Generic;
 using UnityEngine;
+
 public class MovingPlatform : MonoBehaviour
 {
-    private bool shouldMoving = false;
+    [SerializeField] private Vector3 moveOffset = new Vector3(0f, 0f, 32f);
+    [SerializeField] private float speed = 2f;
+    [SerializeField] private bool loop = true;
+    [SerializeField] private float riderCheckHeight = 1.5f;
+    [SerializeField] private float startDelay = 1.5f;
 
-    [SerializeField]
-    private float platformSpeed;
-    [SerializeField]
-    private Vector3 start;
-    [SerializeField]
-    private Vector3 end;
-
+    private Vector3 startPosition;
+    private Vector3 endPosition;
     private Vector3 lastPosition;
+    private bool movingForward = true;
+    private bool moving;
+    private bool startDelayRunning;
+    private float startTimer;
+    private bool hasRider;
+    private bool shouldMoving;
+
+    void Awake()
+    {
+        startPosition = transform.position;
+        endPosition = startPosition + moveOffset;
+        lastPosition = transform.position;
+        shouldMoving = false; // Default to false
+    }
 
     void FixedUpdate()
     {
-        if (shouldMoving)
+        // Check if there's a rider
+        hasRider = HasZombieRider();
+
+        // Only update movement if we should move AND have a rider
+        if (!shouldMoving || !hasRider)
         {
-            lastPosition = transform.position;
+            moving = false;
+            startDelayRunning = false;
+            startTimer = 0f;
+            return;
+        }
 
-            float pingPong = Mathf.PingPong(Time.fixedTime * this.platformSpeed, 1.0f);
+        // If we have a rider and should move, handle the delayed start
+        if (!moving)
+        {
+            UpdateDelayedStart();
+            return;
+        }
 
-            var newPosition = Vector3.Lerp(this.start, this.end, pingPong);
-            this.transform.localPosition = newPosition;
+        // Move the platform
+        Vector3 targetPosition = movingForward ? endPosition : startPosition;
+        Vector3 nextPosition = Vector3.MoveTowards(
+            transform.position,
+            targetPosition,
+            speed * Time.fixedDeltaTime);
+
+        Vector3 delta = nextPosition - transform.position;
+        transform.position = nextPosition;
+        MoveRiders(delta);
+        lastPosition = transform.position;
+
+        if (Vector3.Distance(transform.position, targetPosition) > 0.01f) return;
+
+        if (loop)
+            movingForward = !movingForward;
+    }
+
+    public void ResetPlatform()
+    {
+        moving = false;
+        startDelayRunning = false;
+        startTimer = 0f;
+        movingForward = true;
+        transform.position = startPosition;
+        lastPosition = startPosition;
+    }
+
+    private void UpdateDelayedStart()
+    {
+        if (!startDelayRunning)
+        {
+            // Double-check we still have a rider and should move
+            if (!HasZombieRider() || !shouldMoving) return;
+
+            startDelayRunning = true;
+            startTimer = 0f;
+        }
+
+        startTimer += Time.fixedDeltaTime;
+        if (startTimer >= startDelay)
+            moving = true;
+    }
+
+    private bool HasZombieRider()
+    {
+        Vector3 halfExtents = GetRiderCheckHalfExtents();
+        Vector3 center = GetRiderCheckCenter();
+
+        Collider[] hits = Physics.OverlapBox(center, halfExtents, transform.rotation);
+        foreach (Collider hit in hits)
+        {
+            if (hit.GetComponentInParent<Character>() != null)
+                return true;
+        }
+
+        return false;
+    }
+
+    private void MoveRiders(Vector3 delta)
+    {
+        if (delta.sqrMagnitude <= 0f) return;
+
+        Vector3 halfExtents = GetRiderCheckHalfExtents();
+        Vector3 center = GetRiderCheckCenter();
+
+        Collider[] hits = Physics.OverlapBox(center, halfExtents, transform.rotation);
+        HashSet<CharacterController> movedControllers = new HashSet<CharacterController>();
+
+        foreach (Collider hit in hits)
+        {
+            CharacterController controller = hit.GetComponentInParent<CharacterController>();
+            if (controller == null || movedControllers.Contains(controller)) continue;
+
+            controller.Move(delta);
+            movedControllers.Add(controller);
         }
     }
 
-    public Vector3 GetVelocity()
+    private Vector3 GetRiderCheckHalfExtents()
     {
-        if (shouldMoving)
-        {
-            return (transform.position - lastPosition) / Time.fixedDeltaTime;
-        }
-        else
-        {
-            return Vector3.zero;
-        }
+        return new Vector3(
+            transform.localScale.x * 0.5f,
+            riderCheckHeight * 0.5f,
+            transform.localScale.z * 0.5f);
+    }
+
+    private Vector3 GetRiderCheckCenter()
+    {
+        return transform.position + Vector3.up * ((transform.localScale.y * 0.5f) + (riderCheckHeight * 0.5f));
     }
 
     public void SetShouldMoving(bool shouldPlatformsMoving)
     {
         shouldMoving = shouldPlatformsMoving;
     }
-}
 
+    public Vector3 GetVelocity()
+    {
+        // Return the current velocity of the platform
+        return (transform.position - lastPosition) / Time.fixedDeltaTime;
+    }
+}
