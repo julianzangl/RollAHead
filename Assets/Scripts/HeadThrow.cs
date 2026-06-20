@@ -6,7 +6,14 @@ using UnityEngine.InputSystem;
 
 public class HeadThrow : MonoBehaviour
 {
-    [SerializeField] private GameObject throwableHead;
+    [SerializeField] private GameObject throwableHead;     // default/normal head (also fallback for unset abilities)
+
+    [Header("Ability Head Prefabs (optional)")]
+    [Tooltip("Leer lassen -> Fallback: Basis-Prefab + Component-Swap + Tint.")]
+    [SerializeField] private GameObject robotHeadPrefab;
+    [SerializeField] private GameObject slimeHeadPrefab;
+    [SerializeField] private GameObject fireHeadPrefab;
+
     [SerializeField] private GameObject currentHead;
     [SerializeField] private Transform headSocket;
     [SerializeField] private new CinemachineCamera camera;
@@ -17,12 +24,19 @@ public class HeadThrow : MonoBehaviour
     [SerializeField] private float maxThrowForce = 10f;       // power at the top of the swing
     [SerializeField] private float chargeSpeed = 0.8f;        // how fast the power pendulums low<->high while holding
 
+    // The ability the body's head currently has equipped (set by head pickups).
+    public enum HeadAbility { Normal, Robot, Slime, Fire }
+
     // Read by the HUD: live aim state and the current charge (0 = min power, 1 = max power).
     public bool IsAiming { get; private set; }
     public float ChargeNormalized { get; private set; }
     public bool IsHeadThrown => isHeadThrown;
-    public bool RobotHeadUnlocked => robotHeadUnlocked;
+    public HeadAbility EquippedAbility => equippedHead;
+    public bool RobotHeadUnlocked => equippedHead == HeadAbility.Robot;
+
     public static event System.Action OnRobotHeadUnlocked;
+    public static event System.Action OnSlimeHeadUnlocked;
+    public static event System.Action OnFireHeadUnlocked;
 
     [Header("Throw Aiming")]
     [SerializeField] private float throwTorque = 8f;          // spin so the head tumbles instead of flying lifeless
@@ -55,10 +69,12 @@ public class HeadThrow : MonoBehaviour
     private CinemachineOrbitalFollow orbitalFollow;
     private GameObject spawnedHead;
     private GameObject camTarget;
-    private bool robotHeadUnlocked;
+    private HeadAbility equippedHead = HeadAbility.Normal;
 
     private Animator animator;
     private static readonly Color RobotHeadColor = new Color(0.72f, 0.76f, 0.78f, 1f);
+    private static readonly Color SlimeHeadColor = new Color(0.35f, 0.85f, 0.3f, 1f);
+    private static readonly Color FireHeadColor = new Color(1f, 0.45f, 0.12f, 1f);
 
     void Start()
     {
@@ -326,12 +342,20 @@ public class HeadThrow : MonoBehaviour
         animator.SetBool("isWalking", false); // Stop walking animation when throwing head
         Vector3 throwDirection = GetThrowDirection();
 
+        // Use the dedicated prefab for the equipped ability if one is assigned; otherwise fall back
+        // to the base head prefab and swap the component + tint at runtime (greybox path).
+        GameObject prefabToThrow = GetHeadPrefab(equippedHead);
+        bool usingDedicatedPrefab = prefabToThrow != null;
+        if (prefabToThrow == null)
+            prefabToThrow = throwableHead;
+
         // Spawn the head pushed out along the throw direction so it clears the player's body,
         // otherwise it spawns inside the player's collider and just pops straight up.
         Vector3 spawnPosition = headSocket.position + throwDirection * spawnForwardOffset;
-        spawnedHead = Instantiate(throwableHead, spawnPosition, headSocket.rotation);
+        spawnedHead = Instantiate(prefabToThrow, spawnPosition, headSocket.rotation);
         IgnoreCollisionsWithPlayer(spawnedHead);
-        RobotHead upgradedRobotHead = robotHeadUnlocked ? ApplyRobotHeadUpgrade(spawnedHead) : null;
+        if (!usingDedicatedPrefab)
+            ApplyEquippedAbility(spawnedHead);
 
         currentHead.SetActive(false);
 
@@ -339,21 +363,17 @@ public class HeadThrow : MonoBehaviour
         camTarget = new GameObject("_HeadCamTarget");
         camTarget.transform.position = spawnedHead.transform.position + Vector3.up * 1.5f;
 
-        Head headScript = robotHeadUnlocked ? null : spawnedHead.GetComponent<Head>();
-        RobotHead robotHeadScript = upgradedRobotHead != null ? upgradedRobotHead : spawnedHead.GetComponent<RobotHead>();
-        if (headScript == null && robotHeadScript == null)
+        IThrowableHead headScript = spawnedHead.GetComponent<IThrowableHead>();
+        if (headScript == null)
         {
-            Debug.LogError("[HeadThrow] throwableHead prefab is missing the Head script! Add Head.cs or RobotHead.cs to the prefab.");
+            Debug.LogError("[HeadThrow] throwableHead prefab has no IThrowableHead component (Head/RobotHead/SlimeHead/FireHead).");
             currentHead.SetActive(true);
             isHeadThrown = false;
             Destroy(spawnedHead);
             Destroy(camTarget);
             return;
         }
-        if (robotHeadScript != null)
-            robotHeadScript.Initialize(throwDirection, currentThrowForce, this);
-        else
-            headScript.Initialize(throwDirection, currentThrowForce, this);
+        headScript.Initialize(throwDirection, currentThrowForce, this);
 
         // Add a tumble so the head feels alive in flight instead of sliding stiffly.
         Rigidbody spawnedRb = spawnedHead.GetComponent<Rigidbody>();
@@ -385,21 +405,51 @@ public class HeadThrow : MonoBehaviour
             Destroy(dotMaterial);
     }
 
-    public void EnableRobotHead()
-    {
-        robotHeadUnlocked = true;
-        OnRobotHeadUnlocked?.Invoke();
-        ApplySilverColor(currentHead);
+    public void EnableNormalHead() { EquipAbility(HeadAbility.Normal); }
+    public void EnableRobotHead()  { EquipAbility(HeadAbility.Robot); }
+    public void EnableSlimeHead()  { EquipAbility(HeadAbility.Slime); }
+    public void EnableFireHead()   { EquipAbility(HeadAbility.Fire); }
 
-        if (spawnedHead != null)
+    // Single public entry point for equipping any head ability (used by all head pickups).
+    public void EquipAbility(HeadAbility ability)
+    {
+        EquipHead(ability);
+
+        switch (ability)
         {
-            RobotHead robotHead = ApplyRobotHeadUpgrade(spawnedHead);
-            robotHead.Initialize(Vector3.zero, 0f, this);
+            case HeadAbility.Robot: OnRobotHeadUnlocked?.Invoke(); break;
+            case HeadAbility.Slime: OnSlimeHeadUnlocked?.Invoke(); break;
+            case HeadAbility.Fire:  OnFireHeadUnlocked?.Invoke(); break;
         }
     }
 
-    private RobotHead ApplyRobotHeadUpgrade(GameObject headObject)
+    private void EquipHead(HeadAbility ability)
     {
+        equippedHead = ability;
+
+        // Head pickups only fire while the head is attached (the body must walk into them),
+        // so we never need to convert a head that's already thrown.
+        // Tint the body's head as a greybox cue only when there's no dedicated prefab for this ability.
+        if (GetHeadPrefab(ability) == null)
+            ApplyHeadColor(currentHead, AbilityColor(ability));
+    }
+
+    private GameObject GetHeadPrefab(HeadAbility ability)
+    {
+        switch (ability)
+        {
+            case HeadAbility.Robot: return robotHeadPrefab;
+            case HeadAbility.Slime: return slimeHeadPrefab;
+            case HeadAbility.Fire:  return fireHeadPrefab;
+            default:                return null; // Normal uses the base throwableHead prefab
+        }
+    }
+
+    // Swap the freshly spawned (normal) head for the equipped ability's behaviour + colour.
+    private void ApplyEquippedAbility(GameObject headObject)
+    {
+        if (equippedHead == HeadAbility.Normal) return;
+
         Head normalHead = headObject.GetComponent<Head>();
         if (normalHead != null)
         {
@@ -407,15 +457,34 @@ public class HeadThrow : MonoBehaviour
             Destroy(normalHead);
         }
 
-        RobotHead robotHead = headObject.GetComponent<RobotHead>();
-        if (robotHead == null)
-            robotHead = headObject.AddComponent<RobotHead>();
+        switch (equippedHead)
+        {
+            case HeadAbility.Robot:
+                if (headObject.GetComponent<RobotHead>() == null) headObject.AddComponent<RobotHead>();
+                break;
+            case HeadAbility.Slime:
+                if (headObject.GetComponent<SlimeHead>() == null) headObject.AddComponent<SlimeHead>();
+                break;
+            case HeadAbility.Fire:
+                if (headObject.GetComponent<FireHead>() == null) headObject.AddComponent<FireHead>();
+                break;
+        }
 
-        ApplySilverColor(headObject);
-        return robotHead;
+        ApplyHeadColor(headObject, AbilityColor(equippedHead));
     }
 
-    private void ApplySilverColor(GameObject target)
+    private static Color AbilityColor(HeadAbility ability)
+    {
+        switch (ability)
+        {
+            case HeadAbility.Robot: return RobotHeadColor;
+            case HeadAbility.Slime: return SlimeHeadColor;
+            case HeadAbility.Fire:  return FireHeadColor;
+            default:                return Color.white;
+        }
+    }
+
+    private void ApplyHeadColor(GameObject target, Color color)
     {
         if (target == null) return;
 
@@ -424,9 +493,9 @@ public class HeadThrow : MonoBehaviour
         {
             Material material = headRenderer.material;
             if (material.HasProperty("_BaseColor"))
-                material.SetColor("_BaseColor", RobotHeadColor);
+                material.SetColor("_BaseColor", color);
             if (material.HasProperty("_Color"))
-                material.SetColor("_Color", RobotHeadColor);
+                material.SetColor("_Color", color);
         }
     }
 

@@ -54,7 +54,6 @@ public class PressureButton : MonoBehaviour
     private bool IsActivator(Collider other)
     {
         return other.GetComponentInParent<Character>() != null
-            || other.GetComponentInParent<Head>() != null
-            || other.GetComponentInParent<RobotHead>() != null;
+            || other.GetComponentInParent<IThrowableHead>() != null;
     }
 }

@@ -20,7 +20,7 @@ public class RespawnTrigger : MonoBehaviour
         }
 
         Rigidbody body = other.attachedRigidbody;
-        if (body != null && (body.GetComponent<Head>() != null || body.GetComponent<RobotHead>() != null))
+        if (body != null && body.GetComponent<IThrowableHead>() != null)
         {
             RespawnRigidbody(body);
             ResetMovingPlatforms();

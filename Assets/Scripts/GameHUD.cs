@@ -44,12 +44,16 @@ public class GameHUD : MonoBehaviour
     void OnEnable()
     {
         HeadThrow.OnRobotHeadUnlocked += HandleRobotHeadUnlocked;
+        HeadThrow.OnSlimeHeadUnlocked += HandleSlimeHeadUnlocked;
+        HeadThrow.OnFireHeadUnlocked += HandleFireHeadUnlocked;
         Finish.Reached += HandleFinish;
     }
 
     void OnDisable()
     {
         HeadThrow.OnRobotHeadUnlocked -= HandleRobotHeadUnlocked;
+        HeadThrow.OnSlimeHeadUnlocked -= HandleSlimeHeadUnlocked;
+        HeadThrow.OnFireHeadUnlocked -= HandleFireHeadUnlocked;
         Finish.Reached -= HandleFinish;
         // Safety: never leave a reloaded/next scene frozen if we paused on the win screen.
         Time.timeScale = 1f;
@@ -58,6 +62,16 @@ public class GameHUD : MonoBehaviour
     private void HandleRobotHeadUnlocked()
     {
         ShowTip("Roboterkopf erhalten!  Halte [Linksklick] an einer Wand, um daran hochzuklettern.");
+    }
+
+    private void HandleSlimeHeadUnlocked()
+    {
+        ShowTip("Slimekopf erhalten!  Er hüpft von selbst immer weiter — steuere mit [WASD] von Plattform zu Plattform.");
+    }
+
+    private void HandleFireHeadUnlocked()
+    {
+        ShowTip("Feuerkopf erhalten!  Rolle in brennbare Objekte, um sie zu verbrennen und den Weg frei zu machen.");
     }
 
     private void HandleFinish()
@@ -193,8 +207,12 @@ public class GameHUD : MonoBehaviour
         if (headThrow.IsHeadThrown)
         {
             string thrown = "[WASD] Bewegen    [F] Kopf zurückholen";
-            if (headThrow.RobotHeadUnlocked)
-                thrown += "    [Linksklick] an Wänden klettern";
+            switch (headThrow.EquippedAbility)
+            {
+                case HeadThrow.HeadAbility.Robot: thrown += "    [Linksklick] an Wänden klettern"; break;
+                case HeadThrow.HeadAbility.Slime: thrown += "    hüpft automatisch"; break;
+                case HeadThrow.HeadAbility.Fire:  thrown += "    verbrennt Hindernisse bei Berührung"; break;
+            }
             return thrown;
         }
 

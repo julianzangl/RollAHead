@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class RobotHead : MonoBehaviour
+public class RobotHead : MonoBehaviour, IThrowableHead
 {
     [SerializeField] private float moveSpeed = 5f;
     [SerializeField] private float jumpForce = 6f;

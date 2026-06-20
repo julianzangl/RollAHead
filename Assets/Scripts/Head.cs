@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class Head : MonoBehaviour
+public class Head : MonoBehaviour, IThrowableHead
 {
     [SerializeField] private float moveSpeed = 5f;
     [SerializeField] private float jumpForce = 6f;
