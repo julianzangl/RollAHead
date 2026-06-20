@@ -18,11 +18,11 @@ public class MainMenu : MonoBehaviour
         SceneManager.LoadScene("Zweites Level");
     }
 
-    /*public void LoadLevel3()
+    public void LoadLevel3()
     {
         PlayClickSound();
-        SceneManager.LoadScene("Drittes Level");
-    }*/
+        SceneManager.LoadScene("Third Level");
+    }
 
     public void QuitGame()
     {
