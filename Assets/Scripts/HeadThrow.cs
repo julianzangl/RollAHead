@@ -32,11 +32,6 @@ public class HeadThrow : MonoBehaviour
     public float ChargeNormalized { get; private set; }
     public bool IsHeadThrown => isHeadThrown;
     public HeadAbility EquippedAbility => equippedHead;
-    public bool RobotHeadUnlocked => equippedHead == HeadAbility.Robot;
-
-    public static event System.Action OnRobotHeadUnlocked;
-    public static event System.Action OnSlimeHeadUnlocked;
-    public static event System.Action OnFireHeadUnlocked;
 
     [Header("Throw Aiming")]
     [SerializeField] private float throwTorque = 8f;          // spin so the head tumbles instead of flying lifeless
@@ -415,13 +410,6 @@ public class HeadThrow : MonoBehaviour
     public void EquipAbility(HeadAbility ability)
     {
         EquipHead(ability);
-
-        switch (ability)
-        {
-            case HeadAbility.Robot: OnRobotHeadUnlocked?.Invoke(); break;
-            case HeadAbility.Slime: OnSlimeHeadUnlocked?.Invoke(); break;
-            case HeadAbility.Fire:  OnFireHeadUnlocked?.Invoke(); break;
-        }
     }
 
     private void EquipHead(HeadAbility ability)

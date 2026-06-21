@@ -1,10 +1,10 @@
 using UnityEngine;
 
-// Level exit. When the zombie body walks through it, the run is finished:
-// the HUD stops its timer and shows the win screen.
+// Level exit. When the zombie body walks through it, the level-complete UI is shown
+// via the LevelCompleteManager (same Canvas flow as JewelLevelEnd).
 public class Finish : MonoBehaviour
 {
-    public static event System.Action Reached;
+    [SerializeField] private LevelCompleteManager levelCompleteManager;
 
     private bool triggered;
 
@@ -23,6 +23,13 @@ public class Finish : MonoBehaviour
         if (other.GetComponentInParent<Character>() == null) return;
 
         triggered = true;
-        Reached?.Invoke();
+
+        if (levelCompleteManager == null)
+            levelCompleteManager = FindFirstObjectByType<LevelCompleteManager>();
+
+        if (levelCompleteManager != null)
+            levelCompleteManager.CompleteLevel();
+        else
+            Debug.LogWarning("[Finish] No LevelCompleteManager in scene — add one so the win screen shows.");
     }
 }
