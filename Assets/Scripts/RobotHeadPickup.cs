@@ -1,5 +1,6 @@
 using UnityEngine;
 
+[RequireComponent(typeof(Collider))]
 public class RobotHeadPickup : MonoBehaviour
 {
     private bool collected;
@@ -22,7 +23,7 @@ public class RobotHeadPickup : MonoBehaviour
         if (headThrow == null) return;
 
         collected = true;
-        headThrow.EnableRobotHead();
+        headThrow.EquipAbility(HeadThrow.HeadAbility.Robot);
         gameObject.SetActive(false);
     }
 

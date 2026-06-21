@@ -95,7 +95,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7b5f86204d7e4c1a98f2364230e8a9d1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RobotHead
-  moveSpeed: 5
+  moveSpeed: 4
   jumpForce: 6
   groundCheckDistance: 0.4
   groundSpinDamping: 30

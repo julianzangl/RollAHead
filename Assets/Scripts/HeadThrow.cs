@@ -69,6 +69,7 @@ public class HeadThrow : MonoBehaviour
     private CinemachineOrbitalFollow orbitalFollow;
     private GameObject spawnedHead;
     private GameObject camTarget;
+    private GameObject attachedAbilityHead;
     private HeadAbility equippedHead = HeadAbility.Normal;
 
     private Animator animator;
@@ -357,7 +358,7 @@ public class HeadThrow : MonoBehaviour
         if (!usingDedicatedPrefab)
             ApplyEquippedAbility(spawnedHead);
 
-        currentHead.SetActive(false);
+        SetAttachedHeadVisible(false);
 
         // Camera target is NOT parented to head — manually tracked in Update() to avoid rotation
         camTarget = new GameObject("_HeadCamTarget");
@@ -367,7 +368,7 @@ public class HeadThrow : MonoBehaviour
         if (headScript == null)
         {
             Debug.LogError("[HeadThrow] throwableHead prefab has no IThrowableHead component (Head/RobotHead/SlimeHead/FireHead).");
-            currentHead.SetActive(true);
+            SetAttachedHeadVisible(true);
             isHeadThrown = false;
             Destroy(spawnedHead);
             Destroy(camTarget);
@@ -427,11 +428,31 @@ public class HeadThrow : MonoBehaviour
     {
         equippedHead = ability;
 
-        // Head pickups only fire while the head is attached (the body must walk into them),
-        // so we never need to convert a head that's already thrown.
-        // Tint the body's head as a greybox cue only when there's no dedicated prefab for this ability.
-        if (GetHeadPrefab(ability) == null)
-            ApplyHeadColor(currentHead, AbilityColor(ability));
+        RefreshAttachedHeadVisual();
+    }
+
+    // Keep the rigged head that belongs to the animated body. The ability prefabs are built
+    // for physics/throwing and have their own pivot and mesh offset; parenting one directly
+    // to the animated head bone makes it hang from the zombie at the wrong angle/position.
+    // The dedicated prefab is still instantiated by ThrowHead().
+    private void RefreshAttachedHeadVisual()
+    {
+        if (attachedAbilityHead != null)
+        {
+            Destroy(attachedAbilityHead);
+            attachedAbilityHead = null;
+        }
+
+        SetAttachedHeadVisible(true);
+        ApplyHeadColor(currentHead, AbilityColor(equippedHead));
+    }
+
+    private void SetAttachedHeadVisible(bool visible)
+    {
+        if (attachedAbilityHead != null)
+            attachedAbilityHead.SetActive(visible);
+        else if (currentHead != null)
+            currentHead.SetActive(visible);
     }
 
     private GameObject GetHeadPrefab(HeadAbility ability)
@@ -523,7 +544,7 @@ public class HeadThrow : MonoBehaviour
         }
 
         // Restore state
-        currentHead.SetActive(true);
+        SetAttachedHeadVisible(true);
         isHeadThrown = false;
         camera.Follow = originalFollow;
         camera.LookAt = originalLookAt;
