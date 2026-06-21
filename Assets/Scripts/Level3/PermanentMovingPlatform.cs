@@ -60,20 +60,36 @@ public class PermanentMovingPlatform : MonoBehaviour
         Vector3 center = GetRiderCheckCenter();
 
         Collider[] hits = Physics.OverlapBox(center, halfExtents, transform.rotation);
-        HashSet<CharacterController> movedControllers = new HashSet<CharacterController>();
+        HashSet<Transform> movedObjects = new HashSet<Transform>();
 
         foreach (Collider hit in hits)
         {
-            // Try to get CharacterController directly or from parent
+            Transform root = hit.transform.root;
+            if (movedObjects.Contains(root)) continue;
+
+            // Try CharacterController first
             CharacterController controller = hit.GetComponent<CharacterController>();
             if (controller == null)
                 controller = hit.GetComponentInParent<CharacterController>();
 
-            if (controller == null || movedControllers.Contains(controller)) continue;
+            if (controller != null)
+            {
+                controller.Move(delta);
+                movedObjects.Add(root);
+                continue;
+            }
 
-            // Move the character with the platform
-            controller.Move(delta);
-            movedControllers.Add(controller);
+            // Try Rigidbody (for SlimeHead)
+            Rigidbody rb = hit.GetComponent<Rigidbody>();
+            if (rb == null)
+                rb = hit.GetComponentInParent<Rigidbody>();
+
+            if (rb != null && !rb.isKinematic)
+            {
+                // Move Rigidbody with platform
+                rb.MovePosition(rb.position + delta);
+                movedObjects.Add(root);
+            }
         }
     }
 
