@@ -91,6 +91,12 @@ public class GameHUD : MonoBehaviour
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
+    private void ReturnToMainMenu()
+    {
+        Time.timeScale = 1f;
+        SceneManager.LoadScene("MainMenu");
+    }
+
     public void ShowTip(string message)
     {
         tipMessage = message;
@@ -191,11 +197,19 @@ public class GameHUD : MonoBehaviour
         GUI.Label(new Rect(box.x, box.y + boxH * 0.42f, box.width, boxH * 0.18f),
             "Zeit: " + FormatTime(elapsedTime), winTimeStyle);
 
-        float btnW = boxW * 0.5f;
+        float btnW = boxW * 0.38f;
         float btnH = boxH * 0.18f;
-        Rect btn = new Rect(box.x + (boxW - btnW) * 0.5f, box.y + boxH - btnH - pad, btnW, btnH);
-        if (GUI.Button(btn, "Neustart", buttonStyle))
+        float btnGap = boxW * 0.04f;
+        float buttonsX = box.x + (boxW - btnW * 2f - btnGap) * 0.5f;
+        float buttonsY = box.y + boxH - btnH - pad;
+
+        Rect restartButton = new Rect(buttonsX, buttonsY, btnW, btnH);
+        if (GUI.Button(restartButton, "Neustart", buttonStyle))
             RestartLevel();
+
+        Rect continueButton = new Rect(buttonsX + btnW + btnGap, buttonsY, btnW, btnH);
+        if (GUI.Button(continueButton, "Hauptmenü", buttonStyle))
+            ReturnToMainMenu();
     }
 
     private string BuildHint()
