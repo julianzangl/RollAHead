@@ -776,8 +776,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 54470514}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.25442827, y: -0.0010694102, z: 0.00028134717, w: 0.967091}
-  m_LocalPosition: {x: 36, y: 2.6999917, z: 44.133232}
+  m_LocalRotation: {x: 0.25442785, y: -0.002128316, z: 0.0005599305, w: 0.9670893}
+  m_LocalPosition: {x: 77.4, y: 2.6999917, z: 44.133232}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1175,6 +1175,57 @@ Transform:
   - {fileID: 1439964314}
   - {fileID: 821114418}
   m_Father: {fileID: 1406877470}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &137499646
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 137499648}
+  - component: {fileID: 137499647}
+  m_Layer: 0
+  m_Name: LevelCompleteManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &137499647
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 137499646}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 62bc659cd13680344a85fcdf8f5b5672, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LevelCompleteManager
+  levelCompletePanel: {fileID: 731249224}
+  player: {fileID: 1093542246}
+  mainMenuSceneName: MainMenu
+  nextLevelSceneName: Erstes Level
+  levelTimer: {fileID: 1798214124}
+  finalTimeText: {fileID: 2104301309}
+  timerTextObject: {fileID: 271522930}
+--- !u!4 &137499648
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 137499646}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 8.93851, y: 8.66661, z: 20.19636}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &140321825
 GameObject:
@@ -1604,6 +1655,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 611148671911825002, guid: ec775798f2d4b4f3394f3b7cbbeaf677, type: 3}
       insertIndex: -1
       addedObject: {fileID: 219650055}
+    - targetCorrespondingSourceObject: {fileID: 611148671911825002, guid: ec775798f2d4b4f3394f3b7cbbeaf677, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 219650058}
   m_SourcePrefab: {fileID: 100100000, guid: ec775798f2d4b4f3394f3b7cbbeaf677, type: 3}
 --- !u!1 &219650054 stripped
 GameObject:
@@ -1622,6 +1676,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 39ae8d9580214769b8d4f165b20bba9b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SlimeHeadPickup
+--- !u!114 &219650058
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 219650054}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fcce40c03d6d52941a332bef64fe8a38, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HeadPickUpRotation
+  rotationSpeed: 90
 --- !u!1 &236579157
 GameObject:
   m_ObjectHideFlags: 0
@@ -6838,6 +6905,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 611148671911825002, guid: ec775798f2d4b4f3394f3b7cbbeaf677, type: 3}
       insertIndex: -1
       addedObject: {fileID: 299788182}
+    - targetCorrespondingSourceObject: {fileID: 611148671911825002, guid: ec775798f2d4b4f3394f3b7cbbeaf677, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 299788185}
   m_SourcePrefab: {fileID: 100100000, guid: ec775798f2d4b4f3394f3b7cbbeaf677, type: 3}
 --- !u!1 &299788181 stripped
 GameObject:
@@ -6856,6 +6926,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bda6f70b87c040b3bfbd8bc5de39b60e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FireHeadPickup
+--- !u!114 &299788185
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 299788181}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fcce40c03d6d52941a332bef64fe8a38, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HeadPickUpRotation
+  rotationSpeed: 90
 --- !u!1 &323967968
 GameObject:
   m_ObjectHideFlags: 0
@@ -6913,7 +6996,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Weiter zu Level 2 '
+  m_text: "Zur\xFCck zu Level 1 "
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8a89fa14b10d46a99122fd4f73fca9a2, type: 2}
   m_sharedMaterial: {fileID: 2140474, guid: 8a89fa14b10d46a99122fd4f73fca9a2, type: 2}
@@ -7323,8 +7406,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 377616680}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.25442827, y: -0.0010694102, z: 0.00028134702, w: 0.967091}
-  m_LocalPosition: {x: 36, y: 2.6999917, z: 44.133232}
+  m_LocalRotation: {x: 0.25442788, y: -0.002128316, z: 0.00055993075, w: 0.9670893}
+  m_LocalPosition: {x: 77.4, y: 2.6999917, z: 44.133232}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -24423,6 +24506,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ActivatingMovingPlatform
   movingPlatform: {fileID: 2065952147}
+  rotationSpeed: 90
 --- !u!1 &1890792552
 GameObject:
   m_ObjectHideFlags: 0
@@ -24830,7 +24914,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 462320, guid: 11d95eec203bbdb459772eeaaa4199f3, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 36
+      value: 77.4
       objectReference: {fileID: 0}
     - target: {fileID: 462320, guid: 11d95eec203bbdb459772eeaaa4199f3, type: 3}
       propertyPath: m_LocalPosition.y
@@ -25348,6 +25432,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ActivatingMovingPlatform
   movingPlatform: {fileID: 188109439}
+  rotationSpeed: 90
 --- !u!1 &2065952147 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2578699083161656065, guid: 93dcbf13f3c356541ac710603a62965e, type: 3}
@@ -25808,3 +25893,4 @@ SceneRoots:
   - {fileID: 1798214125}
   - {fileID: 5605393}
   - {fileID: 389953927}
+  - {fileID: 137499648}
