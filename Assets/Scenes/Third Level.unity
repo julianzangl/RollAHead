@@ -7864,7 +7864,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7efb69e3e205340928650fb3b1042ffd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Finish
-  levelCompleteManager: {fileID: 0}
+  levelCompleteManager: {fileID: 137499647}
 --- !u!1 &537547729
 GameObject:
   m_ObjectHideFlags: 0
@@ -22343,7 +22343,7 @@ AudioSource:
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 8300000, guid: 6ddc86548f3823242a3df5864b5fdad6, type: 3}
   m_PlayOnAwake: 0
-  m_Volume: 1
+  m_Volume: 0.3
   m_Pitch: 1
   Loop: 1
   Mute: 0
