@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 8350588503621222771}
   m_Layer: 0
   m_Name: ThowableSlimeHead
-  m_TagString: SlimeHead
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

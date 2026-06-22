@@ -6,8 +6,9 @@ public class Basketball : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        if(!other.gameObject.CompareTag("Player")) return ;
-
-        movingPlatform.GetComponent<MovingPlatform>().SetShouldMoving(true);
+        if (other.gameObject.GetComponent<FireHead>() != null)
+        {
+            movingPlatform.GetComponent<MovingPlatform>().SetShouldMoving(true);
+        }
     }
 }
