@@ -90,8 +90,11 @@ public class Head : MonoBehaviour, IThrowableHead
         }
         else if (moveDir.sqrMagnitude > 0.01f)
         {
-            // Airborne: keep the throw/jump momentum, only allow gentle steering. Never zero it out.
-            rb.AddForce(moveDir * airControl, ForceMode.Acceleration);
+            // Airborne: steer only up to walking speed so holding a direction can't keep
+            // accelerating mid-jump. Existing throw/jump momentum above that is left untouched.
+            float speedInInputDir = Vector3.Dot(new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z), moveDir);
+            if (speedInInputDir < moveSpeed)
+                rb.AddForce(moveDir * airControl, ForceMode.Acceleration);
         }
     }
 

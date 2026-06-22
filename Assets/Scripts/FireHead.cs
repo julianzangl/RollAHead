@@ -10,6 +10,7 @@ public class FireHead : MonoBehaviour, IThrowableHead
     [SerializeField] private float groundCheckDistance = 0.4f;
     [SerializeField] private float groundSpinDamping = 30f;
     [SerializeField] private float airControl = 10f;
+    [SerializeField] private Color headColor = new Color(1f, 0.45f, 0.12f, 1f); // fire tint
 
     private Rigidbody rb;
     private InputAction moveAction;
@@ -35,6 +36,8 @@ public class FireHead : MonoBehaviour, IThrowableHead
         jumpAction = InputSystem.actions.FindAction("Jump");
         recallAction = new InputAction("Recall", InputActionType.Button, "<Keyboard>/f");
         recallAction.Enable();
+
+        ApplyHeadColor();
     }
 
     public void Initialize(Vector3 throwDirection, float throwForce, HeadThrow headThrow)
@@ -42,6 +45,19 @@ public class FireHead : MonoBehaviour, IThrowableHead
         this.headThrow = headThrow;
         isActive = true;
         rb.AddForce(throwDirection * throwForce, ForceMode.Impulse);
+    }
+
+    // Tint the thrown head so it keeps the ability colour after being thrown,
+    // matching the colour shown while it's attached to the body.
+    private void ApplyHeadColor()
+    {
+        Renderer[] renderers = GetComponentsInChildren<Renderer>(true);
+        foreach (Renderer headRenderer in renderers)
+        {
+            Material material = headRenderer.material;
+            if (material.HasProperty("_BaseColor")) material.SetColor("_BaseColor", headColor);
+            if (material.HasProperty("_Color")) material.SetColor("_Color", headColor);
+        }
     }
 
     void OnDestroy()
@@ -88,7 +104,11 @@ public class FireHead : MonoBehaviour, IThrowableHead
         }
         else if (moveDir.sqrMagnitude > 0.01f)
         {
-            rb.AddForce(moveDir * airControl, ForceMode.Acceleration);
+            // Airborne: steer only up to walking speed so holding a direction can't keep
+            // accelerating mid-jump. Existing throw/jump momentum above that is left untouched.
+            float speedInInputDir = Vector3.Dot(new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z), moveDir);
+            if (speedInInputDir < moveSpeed)
+                rb.AddForce(moveDir * airControl, ForceMode.Acceleration);
         }
     }
 

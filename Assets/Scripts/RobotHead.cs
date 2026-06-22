@@ -13,6 +13,7 @@ public class RobotHead : MonoBehaviour, IThrowableHead
     [SerializeField] private float wallCheckRadius = 0.12f;
     [SerializeField] private float wallStickSpeed = 1.5f;
     [SerializeField] private LayerMask climbableLayers = ~0;
+    [SerializeField] private Color headColor = new Color(0.72f, 0.76f, 0.78f, 1f); // robot tint (Andi's silver)
 
     private Rigidbody rb;
     private InputAction moveAction;
@@ -50,6 +51,8 @@ public class RobotHead : MonoBehaviour, IThrowableHead
 
         recallAction = new InputAction("Recall", InputActionType.Button, "<Keyboard>/f");
         recallAction.Enable();
+
+        ApplyHeadColor();
     }
 
     public void Initialize(Vector3 throwDirection, float throwForce, HeadThrow headThrow)
@@ -57,6 +60,19 @@ public class RobotHead : MonoBehaviour, IThrowableHead
         this.headThrow = headThrow;
         isActive = true;
         rb.AddForce(throwDirection * throwForce, ForceMode.Impulse);
+    }
+
+    // Tint the thrown head so it keeps the ability colour after being thrown,
+    // matching the colour shown while it's attached to the body.
+    private void ApplyHeadColor()
+    {
+        Renderer[] renderers = GetComponentsInChildren<Renderer>(true);
+        foreach (Renderer headRenderer in renderers)
+        {
+            Material material = headRenderer.material;
+            if (material.HasProperty("_BaseColor")) material.SetColor("_BaseColor", headColor);
+            if (material.HasProperty("_Color")) material.SetColor("_Color", headColor);
+        }
     }
 
     void OnDestroy()
@@ -121,8 +137,11 @@ public class RobotHead : MonoBehaviour, IThrowableHead
         }
         else if (moveDir.sqrMagnitude > 0.01f)
         {
-            // Airborne: keep the throw/jump momentum, only allow gentle steering. Never zero it out.
-            rb.AddForce(moveDir * airControl, ForceMode.Acceleration);
+            // Airborne: steer only up to walking speed so holding a direction can't keep
+            // accelerating mid-jump. Existing throw/jump momentum above that is left untouched.
+            float speedInInputDir = Vector3.Dot(new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z), moveDir);
+            if (speedInInputDir < moveSpeed)
+                rb.AddForce(moveDir * airControl, ForceMode.Acceleration);
         }
     }
 

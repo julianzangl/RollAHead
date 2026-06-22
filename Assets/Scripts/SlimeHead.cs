@@ -9,6 +9,7 @@ public class SlimeHead : MonoBehaviour, IThrowableHead
     [SerializeField] private float bounceForce = 9f;          // upward speed applied on each landing
     [SerializeField] private float groundCheckDistance = 0.4f;
     [SerializeField] private float bounceCooldown = 0.08f;    // guards against multi-bounce on one contact
+    [SerializeField] private Color headColor = new Color(0.35f, 0.85f, 0.3f, 1f); // slime tint
 
     private Rigidbody rb;
     private InputAction moveAction;
@@ -33,6 +34,8 @@ public class SlimeHead : MonoBehaviour, IThrowableHead
         moveAction = InputSystem.actions.FindAction("Move");
         recallAction = new InputAction("Recall", InputActionType.Button, "<Keyboard>/f");
         recallAction.Enable();
+
+        ApplyHeadColor();
     }
 
     public void Initialize(Vector3 throwDirection, float throwForce, HeadThrow headThrow)
@@ -40,6 +43,19 @@ public class SlimeHead : MonoBehaviour, IThrowableHead
         this.headThrow = headThrow;
         isActive = true;
         rb.AddForce(throwDirection * throwForce, ForceMode.Impulse);
+    }
+
+    // Tint the thrown head so it keeps the ability colour after being thrown,
+    // matching the colour shown while it's attached to the body.
+    private void ApplyHeadColor()
+    {
+        Renderer[] renderers = GetComponentsInChildren<Renderer>(true);
+        foreach (Renderer headRenderer in renderers)
+        {
+            Material material = headRenderer.material;
+            if (material.HasProperty("_BaseColor")) material.SetColor("_BaseColor", headColor);
+            if (material.HasProperty("_Color")) material.SetColor("_Color", headColor);
+        }
     }
 
     void OnDestroy()

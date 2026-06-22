@@ -1249,16 +1249,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   throwableHead: {fileID: 611148671911825002, guid: 4a4cfe0fe07052b4da73e11a2592c7c6, type: 3}
-  robotHeadPrefab: {fileID: 0}
-  slimeHeadPrefab: {fileID: 0}
-  fireHeadPrefab: {fileID: 0}
+  robotHeadPrefab: {fileID: 611148671911825002, guid: f2930de395b32664482335de7ac72393, type: 3}
+  slimeHeadPrefab: {fileID: 611148671911825002, guid: ec775798f2d4b4f3394f3b7cbbeaf677, type: 3}
+  fireHeadPrefab: {fileID: 611148671911825002, guid: 8f7c46345c74047aba47e6bc8fb11443, type: 3}
   currentHead: {fileID: 721083266}
   headSocket: {fileID: 1221285278}
   camera: {fileID: 682406734}
   characterBody: {fileID: 153328240}
   minThrowForce: 3
-  maxThrowForce: 10
-  chargeSpeed: 0.8
+  maxThrowForce: 12
+  chargeSpeed: 1
   throwTorque: 8
   launchAngle: 40
   aimTurnSpeed: 12
