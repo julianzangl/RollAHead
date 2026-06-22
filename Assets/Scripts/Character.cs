@@ -7,6 +7,8 @@ public class Character : MonoBehaviour
     [SerializeField] private float gravity = -9.81f;
     [SerializeField] private float jumpForce = 5f;
     [SerializeField] private float terminalVelocity = -25f;
+    [SerializeField] private AudioSource footstepAudioSource;
+
 
 
     private Animator animator;
@@ -36,6 +38,7 @@ public class Character : MonoBehaviour
             rb.isKinematic = true;
             rb.useGravity = false;
         }
+        footstepAudioSource.Play();
     }
 
     void Update()
@@ -67,6 +70,15 @@ public class Character : MonoBehaviour
         {
             Quaternion targetRotation = Quaternion.LookRotation(moveDir);
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 10f * Time.deltaTime);
+        }
+
+        if (isWalking)
+        {
+            this.footstepAudioSource.mute = false;
+        }
+        else
+        {
+            this.footstepAudioSource.mute = true;
         }
     }
 
