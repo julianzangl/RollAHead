@@ -19,6 +19,11 @@ public class LevelCompleteManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI finalTimeText;
     [SerializeField] private GameObject timerTextObject;
 
+    [Header("Star Rating")]
+    [SerializeField] private TextMeshProUGUI starRatingText;
+    [SerializeField] private float threeStarTime = 180f;
+    [SerializeField] private float twoStarTime = 360f;
+
     private bool levelCompleted = false;
 
     public void CompleteLevel()
@@ -30,6 +35,7 @@ public class LevelCompleteManager : MonoBehaviour
         levelCompleted = true;
 
         StopAndShowFinalTime();
+        ShowStarRating();
         ShowLevelCompleteUI();
         UnlockCursor();
     }
@@ -73,5 +79,49 @@ public class LevelCompleteManager : MonoBehaviour
     {
         Time.timeScale = 1f;
         SceneManager.LoadScene(nextLevelSceneName);
+    }
+
+    private void ShowStarRating()
+    {
+        if (levelTimer == null || starRatingText == null)
+            return;
+
+        float finalTime = levelTimer.GetElapsedTime();
+        int stars = CalculateStars(finalTime);
+
+        starRatingText.text = GetStarText(stars);
+    }
+
+    private int CalculateStars(float time)
+    {
+        if (time <= threeStarTime)
+        {
+            return 3;
+        }
+
+        if (time <= twoStarTime)
+        {
+            return 2;
+        }
+
+        return 1;
+    }
+
+    private string GetStarText(int stars)
+    {
+        if (stars == 3)
+        {
+            //return "★★★"; //Unity erkennt den Stern nicht 
+            return "3/3 Sterne";
+        }
+
+        if (stars == 2)
+        {
+            //return "★★☆";
+            return "2/3 Sterne";
+        }
+
+        //return "★☆☆";
+        return "1/3 Sterne";
     }
 }
