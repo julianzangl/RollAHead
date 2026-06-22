@@ -65,11 +65,13 @@ public class LevelCompleteManager : MonoBehaviour
 
     public void BackToMainMenu()
     {
+        Time.timeScale = 1f;
         SceneManager.LoadScene(mainMenuSceneName);
     }
 
     public void LoadNextLevel()
     {
+        Time.timeScale = 1f;
         SceneManager.LoadScene(nextLevelSceneName);
     }
 }
