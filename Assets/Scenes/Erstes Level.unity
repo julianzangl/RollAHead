@@ -1209,7 +1209,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: '::'
   moveSpeed: 4
   gravity: -9.81
-  jumpForce: 5
+  jumpForce: 0
   terminalVelocity: -25
   footstepAudioSource: {fileID: 1972214616}
 --- !u!143 &153328241
